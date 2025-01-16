@@ -1,0 +1,8 @@
+openmm==8.0.0
+numpy==1.26.0
+scipy==1.11.3 
+tqdm==4.66.1
+numba==0.60.0
+matplotlib==3.8.1
+mdtraj==1.9.9 
+plotly==5.18.0
