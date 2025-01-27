@@ -55,13 +55,13 @@ def prop_pca(simulation,
         pca['target_dim'] = 2
     
     file_handle = open(f"./trajectory/explore/{time_tag}_langevin_sim_explore_{prop_index}.dcd", 'bw')
-    dcd_file = openmm.app.dcdfile.DCDFile(file_handle, top, dt = stepsize) #note top is no longer a global pararm, we need pass this.
+    #dcd_file = openmm.app.dcdfile.DCDFile(file_handle, top, dt = stepsize) #note top is no longer a global pararm, we need pass this.
     all_coor = np.zeros(int(steps/dcdfreq)).astype(object)
     for _ in tqdm(range(int(steps/dcdfreq)), desc=f"Propagation {prop_index}"):
         simulation.integrator.step(dcdfreq)
         state = simulation.context.getState(getPositions=True, enforcePeriodicBox=pbc)
         state_pos = state.getPositions(asNumpy=True)
-        dcd_file.writeModel(state_pos)
+        #dcd_file.writeModel(state_pos)
         try:
             all_coor[_] = state_pos.value_in_unit(unit.nanometers)
         except:
@@ -476,7 +476,9 @@ def fes_pca():
 
     print(fes)
     
+    
     top = Topology()
+    top.getUnitCellDimensions() == None
     top.addChain()
     top.addResidue("xxx", top._chains[0])
     top.addAtom("X1", elem, top._chains[0]._residues[0])
@@ -530,6 +532,8 @@ def fes_pca():
     pos_traj = np.zeros([num_propagation, frame_per_propagation]) #shape: [num_propagation, frame_per_propagation]
     pos_traj_pca = pos_traj.copy()
 
+    
+
     cur_pos, pos_traj, pos_traj_pca, MM, reach, F_M, X, closest_value_pca, coor_xy = prop_pca(
                                                                     simulation = simulation,
                                                                     prop_index = 0,
@@ -563,14 +567,16 @@ if __name__ == "__main__":
             os.makedirs(i)
     elem = Element(0, "X", "X", 1.0)
     top = Topology()
+    top.getUnitCellDimensions == None
     top.addChain()
+    
     top.addResidue("xxx", top._chains[0])
     top.addAtom("X1", elem, top._chains[0]._residues[0])
     top.addAtom("X2", elem, top._chains[0]._residues[0])
 
     mass = 12.0 * unit.amu
 
-    fes_pca()
+    # fes_pca()
 
     for i_sim in range(config.num_sim):
     #def simulate_once():
