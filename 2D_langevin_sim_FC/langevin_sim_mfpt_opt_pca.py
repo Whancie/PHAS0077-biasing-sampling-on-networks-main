@@ -730,7 +730,7 @@ if __name__ == "__main__":
                     pca_cov_matrix_flattened.append(cov_matrix[i].flatten())
                 original_cov_matrix = np.array(original_cov_matrix)
                 pca_cov_matrix_flattened = np.array(pca_cov_matrix_flattened)
-                
+                print("orignal_space_cov_mat")
                 gaussian_params = np.concatenate([gaussian_params_pca[:config.num_gaussian].reshape(config.num_gaussian,1), original_means, original_cov_matrix], axis = 1).T.flatten()
                 gaussian_params_pca_full = np.concatenate([gaussian_params_pca[:config.num_gaussian].reshape(config.num_gaussian,1), mean_vec, pca_cov_matrix_flattened], axis = 1).T.flatten()
                 #save the gaussian_params

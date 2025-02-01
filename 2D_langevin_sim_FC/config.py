@@ -63,5 +63,5 @@ end_state_array = convert_6D_pos_array(end_state.value_in_unit_system(openmm.uni
 #end_state = Quantity(value = [Vec3(1.0, 1.5, 0.1)], unit = unit.nanometers) 
 
 #here we have 3 pre-defined 2D fes, stored as different functions.
-fes_mode = 'multiwell' #chose from ['gaussian', 'multiwell', 'funnel']
+fes_mode = 'gussian' #chose from ['gaussian', 'multiwell', 'funnel']
 #fes_param_path = ['./params/gaussian_fes_param.txt', './params/multi_well_fes_param.txt', './params/funnel_fes_param.txt']

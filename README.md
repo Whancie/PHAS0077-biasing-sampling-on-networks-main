@@ -33,3 +33,7 @@ requirements.txt                # Python dependencies
 ## Usage
 
 Run the main script `langevin_sim_mfpt_opt_pca.py`, the terminal would show the information of the progress propagation, mean first passage time message together with saving the plots of trajectories in PC space and the corresponding applied bias for each propagation.
+
+## New code strucure
+
+![New code Structure](./readme_img/Flowchart.png)
