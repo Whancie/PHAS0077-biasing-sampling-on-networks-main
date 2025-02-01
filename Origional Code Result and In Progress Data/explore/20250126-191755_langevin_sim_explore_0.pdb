@@ -1,5 +1,0 @@
-REMARK   1 CREATED WITH OPENMM 8.2, 2025-01-26
-HETATM    1  X1  xxx A   1      53.630  42.905  -0.562  1.00  0.00           X  
-HETATM    2  X2  xxx A   1       0.395  -0.212  -0.222  1.00  0.00           X  
-TER       3      xxx A   1
-END
