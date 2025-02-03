@@ -36,7 +36,6 @@ def prop_pca(simulation,
               num_bins=config.num_bins,
               pbc=config.pbc,
               time_tag = None,
-              top=None,
               reach=None,
               pca = {'mode':'to_pca'}):
     """
@@ -603,6 +602,7 @@ if __name__ == "__main__":
             plt.close()
         #np.savetxt("./figs/fes.txt",fes)
         
+        # This part of the code is adding barriers
         z1_pot = openmm.CustomExternalForce("1e3 * z^2") # very large force constant in z
         z1_pot.addParticle(0)
         x2_pot = openmm.CustomExternalForce("1e3 * x^2")
