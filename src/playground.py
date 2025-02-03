@@ -1,1 +1,5 @@
-print(type([(1,4,0),(2,1,1),(3,3,0)]))
+import openmm
+
+temp = openmm.Platform.getPlatform(2)
+result = openmm.Platform.getName(temp)
+print(result)

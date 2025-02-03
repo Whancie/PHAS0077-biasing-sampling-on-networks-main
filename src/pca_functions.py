@@ -110,7 +110,7 @@ def prop_pca(
     for i in tqdm.tqdm(range(int(steps / dcdfreq)), desc = f"Propagation {prop_index}"):
         simulation.integrator.step(dcdfreq)
         # Deleted paramater enforcePeriodicBox for getState
-        state = simulation.context.getState(getPositions=True)
+        state = simulation.context.getState(getPositions = True)
         state_pos = state.getPositions(asNumpy = True)
         try:
             all_coor[i] = state_pos.value_in_unit(unit.nanometers)
@@ -130,7 +130,7 @@ def prop_pca(
             closest_value = all_coor[i]
     all_coor = np.vstack(all_coor)
 
-    coor_xy_original = all_coor.squeeze()[:, :2]
+    coor_xy_original = all_coor.squeeze()[:,:2]
     x = np.linspace(0,2 * np.pi, config.num_bins)
     y = x.copy()
     coor_x_digitized_original = np.digitize(coor_xy_original[:, 0], x) - 1#quick fix for digitized to 0 or maximum error. #note this is in coordinate space np.linspace(0, 2*np.pi, num_bins)
@@ -138,7 +138,7 @@ def prop_pca(
 
     coor_xy_digitized_original = np.stack([coor_x_digitized_original, coor_y_digitized_original], axis=1) #shape: [all_frames, 2]
     coor_xy_digitized_ravel_original = np.array([np.ravel_multi_index(coor_temp, (num_bins, num_bins), order = 'F') for coor_temp in coor_xy_digitized_original])
-    pos_traj[prop_index, :] =  coor_xy_digitized_ravel_original.astype(np.int64)
+    pos_traj[prop_index,:] =  coor_xy_digitized_ravel_original.astype(np.int64)
 
     # Digitize the x, y coordinate into meshgrid (0, 2pi, num_bins)
     # Save the top to pdb.
@@ -147,10 +147,10 @@ def prop_pca(
 
     # Find the max and min for the past recorded coor
     if prop_index > 0:
-        max0 = max([np.max(element[: , 0]) for element in coor_xy_list])
-        max1 = max([np.max(element[: , 1]) for element in coor_xy_list])
-        min0 = min([np.min(element[: , 0]) for element in coor_xy_list])
-        min1 = min([np.min(element[: , 1]) for element in coor_xy_list])
+        max0 = max([np.max(element[:, 0]) for element in coor_xy_list])
+        max1 = max([np.max(element[:, 1]) for element in coor_xy_list])
+        min0 = min([np.min(element[:, 0]) for element in coor_xy_list])
+        min1 = min([np.min(element[:, 1]) for element in coor_xy_list])
 
     if pca['mode'] == "pca_transform":
         num = pca["target_dim"]
@@ -160,7 +160,7 @@ def prop_pca(
         coor_transform = pca_transform(all_coor, f"{paths["pca_coords"]}/{prop_index}.pkl", mode="to_pca")
         
         
-        coor_xy = coor_transform.squeeze()[:, :pca['target_dim']] 
+        coor_xy = coor_transform.squeeze()[:,:pca['target_dim']] 
         epsilon = 1e-10
 
         # Compare the past and current max and min
@@ -181,14 +181,13 @@ def prop_pca(
         coor_digitised = []
         X = []
         for  i in range(pca["target_dim"]):
-            x = np.linspace(pca_start[i],pca_end[i],num_bins)
+            x = np.linspace(pca_start[i], pca_end[i], num_bins)
             # find midpoints of bins
             X.append(x)
-
             coor_digitised.append(np.digitize(coor_xy[:, i], x) - 1)
         
         
-        coor_X_digitised = np.stack(coor_digitised,axis = 1)
+        coor_X_digitised = np.stack(coor_digitised, axis = 1)
         closest_value_pca = pca_transform(closest_value.reshape(1, 6), f"{paths['pca_coords']}/0.pkl").reshape(pca["target_dim"])
         target_value_pca = pca_transform(config.end_state_array.reshape(1, 6), f"{paths['pca_coords']}/0.pkl").reshape(pca["target_dim"])
         coor_xy_digitized_ravel = np.array([np.ravel_multi_index(coor_temp, (num_bins, num_bins), order = 'F') for coor_temp in coor_X_digitised])
@@ -196,7 +195,7 @@ def prop_pca(
 
     elif pca['mode'] == "to_pca":
         coor_transform = pca_transform(all_coor, f"{paths['pca_coords']}/0.pkl")
-        coor_xy = coor_transform.squeeze()[:, :pca['target_dim']]
+        coor_xy = coor_transform.squeeze()[:,:pca['target_dim']]
 
         # pc1, pc2 should be discretized in their own min/max +- a epsilon.
         epsi = 1e-10
@@ -226,18 +225,18 @@ def prop_pca(
         closest_value_pca = pca_transform(closest_value.reshape(1, 6),f"{paths['pca_coords']}/0.pkl").reshape(pca["target_dim"])
 
         # add target value
-        target_value_pca = pca_transform(config.end_state_array.reshape(1,6),f"{paths['pca_coords']}/0.pkl").reshape(pca["target_dim"])
+        target_value_pca = pca_transform(config.end_state_array.reshape(1, 6), f"{paths['pca_coords']}/0.pkl").reshape(pca["target_dim"])
 
-        coor_xy_digitized_ravel = np.array([np.ravel_multi_index(coor_temp, (num_bins, num_bins), order='F') for coor_temp in coor_X_digitised])
+        coor_xy_digitized_ravel = np.array([np.ravel_multi_index(coor_temp, (num_bins, num_bins), order = 'F') for coor_temp in coor_X_digitised])
     else:
         raise ValueError("Please Input a valid PCA configuration!")
     
     # we append the coor_xy_digitized into the pos_traj.
     print("The shape of coor_xy_digitised_ravel is:", coor_xy_digitized_ravel.shape)
-    pos_traj_pca[prop_index, :] = coor_xy_digitized_ravel.astype(np.int64)
+    pos_traj_pca[prop_index,:] = coor_xy_digitized_ravel.astype(np.int64)
 
     coor_xy_digital_ravelled_total = pos_traj_pca[:prop_index+1,:] #shape: [prop_index+1, all_frames * 1]
-    coor_xy_digital_ravelled_total = coor_xy_digital_ravelled_total.reshape(-1,1) #shape: [prop_index+1 * all_frames, 1]
+    coor_xy_digital_ravelled_total = coor_xy_digital_ravelled_total.reshape(-1, 1) #shape: [prop_index+1 * all_frames, 1]
 
     if prop_index == 0:
         orig_gaussian_params = np.loadtxt(f"{paths["params"]}/gaussian_fes_param_0.txt").reshape(-1, config.num_gaussian).T
@@ -255,10 +254,10 @@ def prop_pca(
     for i in range(prop_index+1):
         temp_params = np.loadtxt(f"{paths["params"]}/gaussian_fes_param_pca_{i}.txt").reshape(-1,config.num_gaussian).T
 
-        gaussian_params[i, :, :] = temp_params
+        gaussian_params[i,:,:] = temp_params
         print(f"gaussian_params for propagation {i} loaded.")
 
-    print("DHAM input is: ", coor_xy_digital_ravelled_total.reshape(prop_index+1, -1, 1).shape)
+    print("DHAM input is: ", coor_xy_digital_ravelled_total.reshape(prop_index + 1, -1, 1).shape)
 
     F_M, MM = fes_functions.DHAM_it(coor_xy_digital_ravelled_total.reshape(prop_index+1, -1, 1), gaussian_params = gaussian_params, X = X, T = 300, lagtime = 1, numbins = num_bins, paths = paths, prop_index = prop_index)
     ur_pos = coor_xy_digital_ravelled_total[-1] #the current position of the particle, in ravelled 1D form.
@@ -287,7 +286,7 @@ def prop_pca(
 
     # plot the sampled FES on the PC1/PC2 space.
     plt.figure()
-    plt.imshow(np.reshape(F_M.astype(float), [config.num_bins, config.num_bins], order = 'C'), extent = [min(X[0]), max(X[0]), min(X[1]), max(X[1])], cmap = 'coolwarm', origin='lower') 
+    plt.imshow(np.reshape(F_M.astype(float), [config.num_bins, config.num_bins], order = 'C'), extent = [min(X[0]), max(X[0]), min(X[1]), max(X[1])], cmap = 'coolwarm', origin = 'lower', aspect='auto') 
     plt.colorbar()
     plt.savefig(f"{paths["plots"]}/test_fes_p{i_prop}.png")
     plt.close()

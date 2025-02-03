@@ -208,7 +208,7 @@ class MSM:
                 ax = fig.add_subplot(111, projection = '3d')
 
                 slice_index = self.num_states // 2  # Mid slice for example
-                ax.plot_surface(X[:, :, slice_index], Y[:, :, slice_index], W[:, :, slice_index], cmap = "coolwarm")
+                ax.plot_surface(X[:,:, slice_index], Y[:,:, slice_index], W[:,:, slice_index], cmap = "coolwarm")
 
                 ax.set_xlabel('X')
                 ax.set_ylabel('Y')
@@ -291,7 +291,7 @@ class MSM:
             @njit()
             def jjhelper(m, PPD, SD, rD):
                 for n in range(m - 1, 0, -1):
-                    SD[n] = np.sum(PPD[n, :n])
+                    SD[n] = np.sum(PPD[n,:n])
                     for i in range(n):
                         for j in range(n):
                             PPD[i, j] += PPD[i, n] * PPD[n, j] / SD[n]
@@ -398,7 +398,7 @@ class MSM:
             fig = plt.figure(figsize = (12, 8))
             ax = fig.add_subplot(111, projection = '3d')
             slice_index = self.num_states // 2  # Mid slice for example
-            ax.plot_surface(self.qspace[0][:, :, slice_index], self.qspace[1][:, :, slice_index], fes_unravel[:, :, slice_index], cmap = "coolwarm")
+            ax.plot_surface(self.qspace[0][:,:, slice_index], self.qspace[1][:,:, slice_index], fes_unravel[:,:, slice_index], cmap = "coolwarm")
 
             ax.set_xlabel('X')
             ax.set_ylabel('Y')

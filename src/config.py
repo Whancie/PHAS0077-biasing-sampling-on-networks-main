@@ -8,19 +8,19 @@ import numpy as np
 number_of_simulations = 1 # Default 1
 amp = 4 # Default 4
 plot_fes = True # Default True
-sim_steps = int(10000) # Default 10000
+sim_steps = int(1000) # Default 10000
 propagation_step = 500 # Default 500
 dcdfreq = 500 # Default 500
 dcdfreq_mfpt = 1 # Default 1
 num_bins = 20 # Used to discretize the traj, and used in the DHAM. Default 20
 
-num_gaussian = 20 # Number of gaussians used to placing the bias. Default 29
+num_gaussian = 20 # Number of gaussians used to placing the bias. Default 20
 #starting state (as in coordinate space, from 0 to 2pi.)
 start_state = Quantity(value = [Vec3(5.0, 4.0, 0.0),Vec3(0.0, 0.0, 0.0)], unit = unit.nanometers)
 end_state = Quantity(value = [Vec3(1.0, 1.0, 0.0),Vec3(0.0, 0.0, 0.0)], unit = unit.nanometers) #need to change.
 
-# platform = openmm.Platform.getPlatformByName('CUDA')
-platform = openmm.Platform.getPlatformByName('CPU')
+platform = openmm.Platform.getPlatformByName('OpenCL')
+# platform = openmm.Platform.getPlatformByName('CPU')
 
 def convert_6D_pos_array(vecs):
     final_coor_1 = vecs[0]

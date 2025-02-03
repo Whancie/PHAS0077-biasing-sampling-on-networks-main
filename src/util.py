@@ -252,8 +252,8 @@ def gaussian_2D(x, y, a, bx, by, cx, cy):
 
 def gaussian_2d_cov(x, y, gaussian_param):
     amplitude = gaussian_param[0]
-    mean = gaussian_param[1: 3].copy()
-    covariance = gaussian_param[3: ].reshape(2, 2)
+    mean = gaussian_param[1:3].copy()
+    covariance = gaussian_param[3:].reshape(2, 2)
 
     inv_covariance = np.linalg.inv(covariance)
     
@@ -270,7 +270,7 @@ def gaussian_2d_cov(x, y, gaussian_param):
     # Finally, compute the Gaussian
     return amplitude * np.exp(-0.5 * exponent)
 
-def get_total_bias_2d(x,y, gaussian_params,no_covariance = True):
+def get_total_bias_2d(x, y, gaussian_params, no_covariance = True):
     """
     here we get the total bias at x,y.
     note: we used the transposed K matrix, we need to apply transposed total gaussian bias.
@@ -280,11 +280,11 @@ def get_total_bias_2d(x,y, gaussian_params,no_covariance = True):
     if no_covariance:
         num_gaussians = len(gaussian_params) // 5
     
-        a = gaussian_params[: num_gaussians]
-        bx = gaussian_params[num_gaussians: 2 * num_gaussians]
-        by = gaussian_params[2 * num_gaussians: 3 * num_gaussians]
-        cx = gaussian_params[3 * num_gaussians: 4 * num_gaussians]
-        cy = gaussian_params[4 * num_gaussians: 5 * num_gaussians]
+        a = gaussian_params[:num_gaussians]
+        bx = gaussian_params[num_gaussians:2 * num_gaussians]
+        by = gaussian_params[2 * num_gaussians:3 * num_gaussians]
+        cx = gaussian_params[3 * num_gaussians:4 * num_gaussians]
+        cy = gaussian_params[4 * num_gaussians:5 * num_gaussians]
 
         for i in range(num_gaussians):
             total_bias = total_bias + gaussian_2D(x, y, a[i], bx[i], by[i], cx[i], cy[i])
@@ -379,7 +379,7 @@ def try_and_optim_M(M, X, working_indices, prop_index, N = 20, num_gaussian = 20
     best_bias = get_total_bias_2d(X_mesh, Y_mesh, best_params)
     #here we plot the total bias just to check the bias applied in pca space make sence.
     plt.figure()
-    plt.imshow(best_bias,cmap="coolwarm", extent=[min(X[0]), max(X[0]), min(X[1]), max(X[1])], origin="lower")
+    plt.imshow(best_bias,cmap="coolwarm", extent=[min(X[0]), max(X[0]), min(X[1]), max(X[1])], origin="lower", aspect='auto')
     plt.title("best_bias in the pca space.")
     plt.colorbar()
     plt.savefig(f'{paths["plots"]}/test_best_bias_p{prop_index}.png')
@@ -410,7 +410,7 @@ def try_and_optim_M(M, X, working_indices, prop_index, N = 20, num_gaussian = 20
     res = minimize(
         mfpt_helper,
         best_params,
-        args=(
+        args = (
             M,
             start_state_working_index,
             end_state_working_index,
@@ -425,17 +425,17 @@ def try_and_optim_M(M, X, working_indices, prop_index, N = 20, num_gaussian = 20
 
     optimised_bias = get_total_bias_2d(X_mesh, Y_mesh, gaussian_param)
     plt.figure()
-    plt.imshow(optimised_bias,cmap="coolwarm", extent=[min(X[0]), max(X[0]), min(X[1]), max(X[1])], origin="lower")
+    plt.imshow(optimised_bias, cmap = "coolwarm", extent=[min(X[0]), max(X[0]), min(X[1]), max(X[1])], origin = "lower", aspect='auto')
     plt.title("optimised_bias in the pca space.")
     plt.colorbar()
     plt.savefig(f'{paths["plots"]}/test_optimised_bias_p{prop_index}.png')
     plt.close()
 
-    A = gaussian_param[: num_gaussian]
-    x0 = gaussian_param[num_gaussian: 2 * num_gaussian]
-    y0 = gaussian_param[2 * num_gaussian: 3 * num_gaussian]
-    sigma_x = gaussian_param[3 * num_gaussian: 4 * num_gaussian]
-    sigma_y = gaussian_param[4 * num_gaussian: 5 * num_gaussian]
+    A = gaussian_param[:num_gaussian]
+    x0 = gaussian_param[num_gaussian:2 * num_gaussian]
+    y0 = gaussian_param[2 * num_gaussian:3 * num_gaussian]
+    sigma_x = gaussian_param[3 * num_gaussian:4 * num_gaussian]
+    sigma_y = gaussian_param[4 * num_gaussian:5 * num_gaussian]
 
     mean_vec = []
     cov_matrix = []
@@ -474,13 +474,13 @@ def update_bias_2D_FC(simulation, gaussian_param, num_gaussians = 20):
     assert len(gaussian_param) == 43 * num_gaussians
 
     #unpack gaussian parameters gaussian_params = np.concatenate((a, bx, by, cx, cy))
-    A = gaussian_param[: num_gaussians]
+    A = gaussian_param[:num_gaussians]
     means = []
     covs = []
     for i in range(6):
-        means.append(gaussian_param[(i + 1) * num_gaussians: (i + 2) * num_gaussians])
+        means.append(gaussian_param[(i + 1) * num_gaussians : (i + 2) * num_gaussians])
         for j in range(6):
-            covs.append(gaussian_param[(7 + 6 * i) * num_gaussians + j * num_gaussians: (7 + 6 * i) * num_gaussians + (j + 1) * num_gaussians])
+            covs.append(gaussian_param[(7 + 6 * i) * num_gaussians + j * num_gaussians : (7 + 6 * i) * num_gaussians + (j + 1) * num_gaussians])
     means = np.array(means).T
     covs = np.array(covs).T
 

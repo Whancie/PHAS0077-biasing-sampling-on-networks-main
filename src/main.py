@@ -125,9 +125,9 @@ if __name__ == "__main__":
 
         # Setup and propagation #0 complete, starting main loop
         for i_prop in range(1, num_propagation):
-            print(f"-- Propagation #{i_prop} of {num_propagation} starting... --")
+            print(f"-- Propagation #{i_prop} of {num_propagation - 1} starting... --")
             #find the most visited state in last propagation.
-            last_traj = pos_traj_pca[i_prop-1, :]
+            last_traj = pos_traj_pca[i_prop-1,:]
             most_visited_state = np.argmax(np.bincount(last_traj.astype(int))) #this is in digitized, ravelled form.
 
             # Change the local start index as the start index (the first element of last_traj) changed Feifan Jun18th
@@ -162,14 +162,13 @@ if __name__ == "__main__":
             original_cov_matrix = np.array(original_cov_matrix)
             pca_cov_matrix_flattened = np.array(pca_cov_matrix_flattened)
             print("orignal_space_cov_mat")
-            gaussian_params = np.concatenate([gaussian_params_pca[: config.num_gaussian].reshape(config.num_gaussian, 1), original_means, original_cov_matrix], axis = 1).T.flatten()
-            gaussian_params_pca_full = np.concatenate([gaussian_params_pca[: config.num_gaussian].reshape(config.num_gaussian, 1), mean_vec, pca_cov_matrix_flattened], axis = 1).T.flatten()
+            gaussian_params = np.concatenate([gaussian_params_pca[:config.num_gaussian].reshape(config.num_gaussian, 1), original_means, original_cov_matrix], axis = 1).T.flatten()
+            gaussian_params_pca_full = np.concatenate([gaussian_params_pca[:config.num_gaussian].reshape(config.num_gaussian, 1), mean_vec, pca_cov_matrix_flattened], axis = 1).T.flatten()
             #save the gaussian_params
             np.savetxt(f"{paths['params']}/gaussian_fes_param_{i_prop}.txt", gaussian_params)
             np.savetxt(f"{paths['params']}/gaussian_fes_param_pca_{i_prop}.txt", gaussian_params_pca_full)
 
             ############ transfer to original space ############
-                
 
             #apply the gaussian_params to openmm system.
             simulation = util.update_bias_2D_FC(
@@ -195,10 +194,10 @@ if __name__ == "__main__":
 
             #plot in pca space.
             plt.figure()
-            plt.plot(coor_xy_list[i_prop][: , 0], coor_xy_list[i_prop][: , 1], label = f'traj {i_prop}')
+            plt.plot(coor_xy_list[i_prop][:, 0], coor_xy_list[i_prop][:, 1], label = f'traj {i_prop}')
             plt.plot(closest_list[i_prop][0], closest_list[i_prop][1], marker = 'o', color = 'red', label = f'closest point {i_prop}')
             plt.plot(coor_xy_list[i_prop][0, 0], coor_xy_list[i_prop][0, 1], marker = 'o', color = 'blue', label = f'start point {i_prop}')
-            plt.plot(coor_xy_list[i_prop - 1][: , 0], coor_xy_list[i_prop - 1][: , 1], label = f'traj {i_prop - 1}')
+            plt.plot(coor_xy_list[i_prop - 1][:, 0], coor_xy_list[i_prop - 1][:, 1], label = f'traj {i_prop - 1}')
             plt.plot(closest_list[i_prop - 1][0], closest_list[i_prop - 1][1], marker = 'x', label = f'closest point {i_prop - 1}')
             plt.plot(coor_xy_list[i_prop - 1][0, 0], coor_xy_list[i_prop - 1][0, 1], marker = 'x', label = f'start point {i_prop - 1}')
             plt.title("traj in pca space.")
@@ -218,14 +217,14 @@ if __name__ == "__main__":
             closest_index = util.find_closest_index(working_indices, closest_index, config.num_bins)
 
         #we have reached target state, thus we record the steps used.
-        total_steps = i_prop * config.propagation_step + reach * config.dcdfreq_mfpt
+        total_steps = i_prop * config.propagation_step + config.dcdfreq_mfpt
         print("total steps used: ", total_steps)
 
-        with open(f"{paths["root"]}total_steps_mfpt.csv", "a") as f:
+        with open(f"{paths["root"]}/total_steps_mfpt.csv", "a") as f:
             writer = csv.writer(f)
             writer.writerow([total_steps])
 
         #save the pos_traj
-        np.savetxt(f"{paths['root']}pos_trajectories.txt", pos_traj)
+        np.savetxt(f"{paths['root']}/pos_trajectories.txt", pos_traj)
 
 print("----- ALL DONE!!! -----")

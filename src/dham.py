@@ -22,8 +22,8 @@ import config
 
 def gaussian_2d_cov(x: nptypes.NDArray, y: nptypes.NDArray, gaussian_param: nptypes.NDArray) -> nptypes.NDArray:
     amplitude = gaussian_param[0]
-    mean = gaussian_param[1: 3].copy()
-    covariance = gaussian_param[3: ].reshape(2, 2)
+    mean = gaussian_param[1:3].copy()
+    covariance = gaussian_param[3:].reshape(2, 2)
 
     inv_covariance = np.linalg.inv(covariance)
     
@@ -109,7 +109,7 @@ class DHAM:
                                     gaussian_param_slice = self.gaussian_params[k, g,:]
                                     u += gaussian_2d_cov(self.x, self.y, gaussian_param_slice)
                                 elif self.gaussian_params.shape[2] == 5:    
-                                    ax, bx, by, cx, cy = self.gaussian_params[k, g, :]
+                                    ax, bx, by, cx, cy = self.gaussian_params[k, g,:]
                                     u += gaussian_2d(self.x, self.y, ax, bx, by, cx, cy)
                             if trvec[k, i] > 0:
                                 sump1 += trvec[k, i] * np.exp((u[j_x, j_y] - u[i_x, i_y]) / (2 * self.KbT))
@@ -119,10 +119,10 @@ class DHAM:
                             MM[i, j] = 0
 
             for i in range(MM.shape[0]):
-                if np.sum(MM[i, :]) > 0:
-                    MM[i, :] = MM[i, :] / np.sum(MM[i, :])
+                if np.sum(MM[i,:]) > 0:
+                    MM[i,:] = MM[i,:] / np.sum(MM[i,:])
                 else:
-                    MM[i, :] = 0
+                    MM[i,:] = 0
         else:
             raise NotImplementedError("Not biased is not implemented!!!")
         
