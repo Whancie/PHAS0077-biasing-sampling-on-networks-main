@@ -50,5 +50,8 @@ Temporary Items
 .history
 .ionide
 
+### pycache ###
+**/__pycache__/
+
 ### Progress files
 data

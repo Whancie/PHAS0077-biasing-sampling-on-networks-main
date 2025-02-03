@@ -17,7 +17,7 @@ num_bins = 20 # Used to discretize the traj, and used in the DHAM. Default 20
 num_gaussian = 20 # Number of gaussians used to placing the bias. Default 29
 #starting state (as in coordinate space, from 0 to 2pi.)
 start_state = Quantity(value = [Vec3(5.0, 4.0, 0.0),Vec3(0.0, 0.0, 0.0)], unit = unit.nanometers)
-end_state = Quantity(value = [Vec3(1.0, 1.0, 0.0),Vec3(0.0,0.0,0.0)], unit = unit.nanometers) #need to change.
+end_state = Quantity(value = [Vec3(1.0, 1.0, 0.0),Vec3(0.0, 0.0, 0.0)], unit = unit.nanometers) #need to change.
 
 # platform = openmm.Platform.getPlatformByName('CUDA')
 platform = openmm.Platform.getPlatformByName('CPU')
